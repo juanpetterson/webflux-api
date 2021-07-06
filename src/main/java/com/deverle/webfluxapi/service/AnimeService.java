@@ -20,7 +20,24 @@ public class AnimeService {
 
     public Mono<Anime> findById(int id) {
         return animeRepository.findById(id)
-                .switchIfEmpty(monoResponseStatusNotFoundException()).log();
+                .switchIfEmpty(monoResponseStatusNotFoundException())
+                .log();
+    }
+
+    public Mono<Anime> save(Anime anime) {
+        return animeRepository.save(anime);
+    }
+
+    public Mono<Void> update(Anime anime) {
+        return findById(anime.getId())
+                .flatMap(animeRepository::save)
+                .then();
+    }
+
+    public Mono<Void> delete(int id) {
+        return findById(id)
+                .flatMap(animeRepository::delete)
+                .then();
     }
 
     public <T> Mono<T> monoResponseStatusNotFoundException() {
